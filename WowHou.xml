@@ -1,0 +1,99 @@
+ <Ui xmlns="http://www.blizzard.com/wow/ui/"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ../../FrameXML/UI.xsd">
+	
+	<Frame name="WH_MainFrame" toplevel="true" movable="true" enableMouse="true" hidden="false" parent="UIParent" frameStrata="MEDIUM" inherits="SecureFrameTemplate"> 
+		<Size x="364" y="580"/>
+		
+		<Anchors>
+			<Anchor point="CENTER" x="0" Y="0"/>
+		</Anchors>
+
+		<Frames>
+			<Frame name="WH_GameFrame" enableMouse="true" hidden="false" parent="WH_MainFrame" frameStrata="MEDIUM" inherits="SecureFrameTemplate"> 
+		<Size x="300" y="500"/>
+		
+		<Anchors>
+			<Anchor point="BOTTOMLEFT" x="32" Y="32"/>
+		</Anchors>
+
+	</Frame>
+	
+	<Frame name="WH_GameFrameEnemyOverlay" toplevel="true"  inherits="SecureFrameTemplate" parent="WH_MainFrame"> 
+		<Anchors>
+			<Anchor point="TOPLEFT" relativeTo="WH_GameFrame" />
+			<Anchor point="BOTTOMRIGHT" relativeTo="WH_GameFrame" />
+		</Anchors>
+	</Frame>
+	
+	<Frame name="WH_GameFrameHeroOverlay" toplevel="true"  inherits="SecureFrameTemplate" parent="WH_MainFrame"> 
+		<Anchors>
+			<Anchor point="TOPLEFT" relativeTo="WH_GameFrame" x="-32" y="32"/>
+			<Anchor point="BOTTOMRIGHT" relativeTo="WH_GameFrame" x="32" y="-32"/>
+		</Anchors>
+	</Frame>
+	
+	<Frame name="WH_GameFrameBulletOverlay" toplevel="true"  inherits="SecureFrameTemplate" parent="WH_MainFrame"> 
+		<Anchors>
+			<Anchor point="TOPLEFT" relativeTo="WH_GameFrame" />
+			<Anchor point="BOTTOMRIGHT" relativeTo="WH_GameFrame" />
+		</Anchors>
+	</Frame>
+	
+	<Frame name="WH_BorderOverlay" hidden="false" enableMouse="false"  parentKey="borders" parent="WH_MainFrame" frameStrata="medium">
+		<Anchors>
+			<Anchor point="TOPLEFT" relativeTo="WH_GameFrame" x="-32" y="32"/>
+			<Anchor point="BOTTOMRIGHT" relativeTo="WH_GameFrame" x="32" y="-32"/>
+		</Anchors>
+	
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture file="Tileable-ParchmentEdge-Bottom"> <!-- Top -->
+					<Size y="32"/>
+					<Anchors>
+						<Anchor point="TOPLEFT"/>
+						<Anchor point="TOPRIGHT"/>
+					</Anchors>
+					<Color r="0" g="0" b="0" a="1"/>
+				</Texture>
+				<Texture> <!-- Bottom -->
+					<Size y="32"/>
+					<Anchors>
+						<Anchor point="BOTTOMLEFT"/>
+						<Anchor point="BOTTOMRIGHT"/>
+					</Anchors>
+					<Color r="0" g="0" b="0" a="1"/>
+				</Texture>
+				<Texture> <!-- Left -->
+					<Size x="32"/>
+					<Anchors>
+						<Anchor point="TOPLEFT"/>
+						<Anchor point="BOTTOMLEFT"/>
+					</Anchors>
+					<Color r="0" g="0" b="0" a="1"/>
+				</Texture>
+				<Texture> <!-- Right -->
+					<Anchors>
+						<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" x="-32"/>
+						<Anchor point="BOTTOMRIGHT"/>
+					</Anchors>
+					<Color r="0" g="0" b="0" a="1"/>
+				</Texture>
+			</Layer>
+			<Layer level="ARTWORK">
+				<FontString name="$parentScore" inherits="GameFontNormal" maxLines="1" hidden="false" justifyH="LEFT" parentKey="Score" text="Score: 0">
+					<Anchors>
+						<Anchor point="TOPLEFT" x="50" y="-10"/>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+	</Frame>
+		</Frames>
+		
+	</Frame>
+	
+	
+	
+
+ </Ui>

@@ -1,0 +1,14 @@
+﻿## Interface: 60200
+## Title: WowHou
+## Notes: Testing 123.
+## Author: LanceDH
+## Version: 0.1
+## SavedVariablesPerCharacter: 
+WowHou.xml
+Bullet.lua
+BulletStream.lua
+EnemyFunctions.lua
+EnemyData.lua
+Enemy.lua
+Hero.lua
+WowHou.lua
