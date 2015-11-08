@@ -28,7 +28,7 @@ setmetatable(Enemy, {
 local function GetFirstInactiveEnemy()
 
 	for k, e in ipairs(WH_GameFrame.enemies) do
-		if (not e.texture:IsShown()) then
+		if (not e.isActive) then
 			return e;
 		end
 	end
@@ -52,6 +52,10 @@ function Enemy.new(data)
 	self.name = ""..#WH_GameFrame.enemies;
 
 	self.phase = PHASE1;
+	self.isBoss = false;
+	if (data.isBoss ~= nil) then
+		self.isBoss = data.isBoss;
+	end
 	self.x = data.x;
 	self.y = data.y;
 	self.tX = data.x;
@@ -66,6 +70,7 @@ function Enemy.new(data)
 	self.healthMax = data.health;
 	self.health = data.health;
 	self.waypoints = data.waypoints;
+	self.isActive = true;
 
 	for k, s in ipairs(data.sources) do
 		table.insert(self.sources, Bs(self.x, self.y, s, true));
@@ -82,6 +87,11 @@ function Enemy.new(data)
 	self.healthbar:SetPoint("CENTER", self.parent, "BOTTOMLEFT", self.x-1, self.y - self.height/2 - 5);
 	self.healthbar:SetSize( self.health / self.healthMax * self.width, 3);
 	self.healthbar:SetTexture(0.8, 0.2, 0.2);
+	if (self.isBoss) then
+		self.healthbar:Hide();
+	else
+		self.healthbar:Show();
+	end
 	--self.healthbar:SetTexture("Interface/CHARACTERFRAME/BarFill");
 	--self.healthbar:SetVertexColor(1, 0.3, 0.3)
 	
@@ -131,6 +141,10 @@ end
 
 function Enemy:Reuse(data)
 	self.phase = PHASE1;
+	self.isBoss = false;
+	if (data.isBoss ~= nil) then
+		self.isBoss = data.isBoss;
+	end
 	self.x = data.x;
     self.y = data.y;
 	self.tX = data.x;
@@ -143,6 +157,7 @@ function Enemy:Reuse(data)
 	self.radius = self.height /2;
 	self.healthMax = data.health;
 	self.health = data.health;
+	self.isActive = true;
 
 	for k, s in ipairs(data.sources) do
 		table.insert(self.sources, Bs(self.x, self.y, 0.1, 0.5, s, true, 3));
@@ -155,7 +170,11 @@ function Enemy:Reuse(data)
 	
 	self.healthbar:SetPoint("BOTTOMLEFT", self.parent, "BOTTOMLEFT", self.x - self.width/2-1, self.y - self.height/2 - 5);
 	self.healthbar:SetSize(self.width, 5);
-	self.healthbar:Show();
+	if (self.isBoss) then
+		self.healthbar:Hide();
+	else
+		self.healthbar:Show();
+	end
 	
 	data = nil;
 end
@@ -164,4 +183,5 @@ function Enemy:Hide()
 	self.texture:Hide();
 	self.healthbar:Hide();
 	self.sources = {};
+	self.isActive = false;
 end

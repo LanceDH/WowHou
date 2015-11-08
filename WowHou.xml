@@ -91,7 +91,42 @@
 			</Layer>
 		</Layers>
 		
-		
+		<Frames>
+			<Frame name="WH_BossHealthFrame" hidden="false" enableMouse="false">
+				<Size x="212" y="20"/>
+				<Anchors>
+					<Anchor point="TOP" y="-32"/>
+				</Anchors>
+				<Layers>
+					<Layer level="BACKGROUND">
+						<Texture>
+							<Anchors>
+								<Anchor point="TOPLEFT" x="6" y="-5"/>
+								<Anchor point="BOTTOMRIGHT" x="-6" y="5"/>
+							</Anchors>
+							<Color r="0" g="0" b="0" a="1"/>
+						</Texture>
+						<Texture parentKey="health">
+							<size x="200" />
+							<Anchors>
+								<Anchor point="TOPLEFT" x="6" y="-5"/>
+								<Anchor point="BOTTOMLEFT" y="5"/>
+							</Anchors>
+							--<Color r="1" g="0" b="0" a="0.75"/>
+						</Texture>
+					</Layer>
+					<Layer level="ARTWORK">
+						<Texture file="Interface\CastingBar\UI-CastingBar-Border-Small">
+							<Anchors>
+								<Anchor point="TOPLEFT"/>
+								<Anchor point="BOTTOMRIGHT"/>
+							</Anchors>
+							<TexCoords left="0.10" right="0.9" top="0.30" bottom="0.70"/>
+						</Texture>
+					</Layer>
+				</Layers>
+			</Frame>
+		</Frames>
 		
 	</Frame>
 		</Frames>

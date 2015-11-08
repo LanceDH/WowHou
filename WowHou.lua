@@ -24,7 +24,7 @@ local _MemMaxHistory = 40;
 
 local _ActiveLevel = {{["time"] = 2, ["name"] = "PlebTest", ["funcName"] = "Waypoints", ["x"] = GAMEFIELD_WIDTH/4, ["y"] = GAMEFIELD_HEIGHT }
 					--,{["time"] = 2, ["name"] = "PlebTest", ["x"] = 3*GAMEFIELD_WIDTH/4, ["y"] = GAMEFIELD_HEIGHT }
---{["time"] = 0.1, ["name"] = "BossTest", ["x"] = GAMEFIELD_WIDTH/2, ["y"] = GAMEFIELD_HEIGHT - 32}
+					,{["time"] = 4, ["name"] = "BossTest", ["funcName"] = "BossTest", ["x"] = GAMEFIELD_WIDTH/2, ["y"] = GAMEFIELD_HEIGHT - 64}
 					--,{["time"] = 6, ["name"] = "PlebTest", ["x"] = GAMEFIELD_WIDTH/3, ["y"] = GAMEFIELD_HEIGHT - 32}
 					--,{["time"] = 8, ["name"] = "PlebTest", ["x"] = 2*GAMEFIELD_WIDTH/3, ["y"] = GAMEFIELD_HEIGHT - 32}
 					};
@@ -188,6 +188,17 @@ local function UpdateHero(elapsed)
 	WH_GameFrame.hero:Tick(elapsed);
 end
 
+local function UpdateHealthbar()
+	WH_BossHealthFrame.health:SetWidth(200);
+	WH_BossHealthFrame:Hide();
+	for ke, enemy in ipairs(WH_GameFrame.enemies) do
+		if (enemy.isBoss and enemy.isActive) then
+			WH_BossHealthFrame.health:SetWidth(200 * enemy.health / enemy.healthMax);
+			WH_BossHealthFrame:Show();
+		end
+	end
+end
+
 local function ResetGamefield()
 	CopyLevelSpawns(_ActiveLevel);
 	for k, v in ipairs(WH_GameFrame.dots) do
@@ -200,8 +211,6 @@ local function ResetGamefield()
 	_Score = 0;
 	_GameTimer = 0;
 end
-
-
 
 local function HandleWaves()
 	local spawn = nil;
@@ -238,6 +247,9 @@ local function InitMainframe()
 	WH_GameFrameHeroOverlay:SetFrameLevel(WH_GameFrame:GetFrameLevel() + 2);
 	WH_GameFrameBulletOverlay:SetFrameLevel(WH_GameFrame:GetFrameLevel() + 3);
 	WH_BorderOverlay:SetFrameLevel(WH_GameFrame:GetFrameLevel() + 4);
+	
+	WH_BossHealthFrame.health:SetWidth(200);
+	WH_BossHealthFrame:Hide();
 
 	
 	--_Enemy(GAMEFIELD_WIDTH/2, GAMEFIELD_HEIGHT - 32);
@@ -266,6 +278,7 @@ local function InitMainframe()
 				UpdateBullet(_tick); 
 				UpdateHero(_tick);
 				CheckCollision();
+				UpdateHealthbar();
 				WH_GameFrameEnemyOverlay:SetFrameLevel(WH_GameFrame:GetFrameLevel() + 1);
 				WH_GameFrameHeroOverlay:SetFrameLevel(WH_GameFrame:GetFrameLevel() + 2);
 				WH_GameFrameBulletOverlay:SetFrameLevel(WH_GameFrame:GetFrameLevel() + 3);
