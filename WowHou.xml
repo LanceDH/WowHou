@@ -86,13 +86,17 @@
 						<Anchor point="TOPLEFT" x="50" y="-10"/>
 					</Anchors>
 				</FontString>
+
+				
 			</Layer>
 		</Layers>
+		
+		
+		
 	</Frame>
 		</Frames>
 		
 	</Frame>
-	
 	
 	
 

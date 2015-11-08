@@ -78,6 +78,7 @@ function Bullet.new(data)
 	self.texture = WH_GameFrameBulletOverlay:CreateTexture(self.name, "ARTWORK");
 	self.texture:SetPoint("CENTER", WH_GameFrameBulletOverlay, "BOTTOMLEFT", x, y);
 	self.texture:SetSize(self.radius*2, self.radius*2);
+	self.texture:SetTexture("Interface/CHARACTERFRAME/TempPortraitAlphaMaskSmall");
 	self:UpdateTexture()
 
 	table.insert(WH_GameFrame.dots, self);
@@ -88,9 +89,9 @@ end
 
 function Bullet:UpdateTexture()
 	if (self.isEnemy) then
-		self.texture:SetTexture("Interface/MINIMAP/Minimap_skull_elite");
+		self.texture:SetVertexColor(1, 0.5, 0, 0.5);
 	else
-		self.texture:SetTexture("Interface/MINIMAP/Minimap_skull_normal");
+		self.texture:SetVertexColor(0.5, 0.5, 1, 0.5);
 	end
 end
 
@@ -102,12 +103,16 @@ function Bullet:UpdatePos(elapsed)
 	local hor = math.cos(math.rad(self.angle));
 	local vert = math.sin(math.rad(self.angle));
 
+	hor = (math.abs(hor) < 0.001 and 0 or hor);
+	vert = (math.abs(vert) < 0.001 and 0 or vert);
+	
+	
 	self.x = self.x - (self.speed*elapsed*hor);
 	self.y = self.y - (self.speed*elapsed*(-vert)); --minus because sin 270° = -1 and y = -1 is up
 	self.tX = self.x;
 	self.tY = self.y;
-	--self.tX = self.x + (math.cos(self.elapsed*3) * 50);
-	--self.tY = self.y + (math.sin(self.elapsed*1) * 10);
+	--self.tX = self.x + (math.sin(self.elapsed*3) * 20);
+	--self.tY = self.y + (math.sin(self.elapsed*5) * 10);
 	self.texture:ClearAllPoints();
 	self.texture:SetPoint("CENTER", self.parent, "BOTTOMLEFT", self.tX, self.tY);
 	
@@ -157,6 +162,8 @@ function Bullet:Reuse(data)
 	self.speed = data.speed;
 	
 	self:UpdateTexture();
+	self.texture:ClearAllPoints();
+	self.texture:SetPoint("CENTER", self.parent, "BOTTOMLEFT", self.tX, self.tY);
 	self.texture:Show();
 	
 	data = nil;

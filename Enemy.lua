@@ -47,15 +47,6 @@ function addon.CreateEnemy(data)
 	data = nil;
 end
 
--- function addon.CreateEnemy(x, y, width, height, texture, sources, name, speed)
-	-- local e = GetFirstInactiveEnemy()
-	-- if (e) then
-		-- e:Reuse(x, y, width, height, texture, sources, name, speed)
-	-- else
-		-- Enemy.new(x, y, width, height, texture, sources, name, speed)
-	-- end
--- end
-
 function Enemy.new(data)
 	local self = setmetatable({}, Enemy)
 	self.name = ""..#WH_GameFrame.enemies;
@@ -74,15 +65,13 @@ function Enemy.new(data)
 	self.radius = self.height /2;
 	self.healthMax = data.health;
 	self.health = data.health;
-	--local sources = {{["x"] = -50, ["y"] = -32, ["speed"] = 100, ["dir"] = 1, ["bType"] = "WAVE"}
-	--				,{["x"] = 50, ["y"] = -32, ["speed"] = 100, ["dir"] = -1, ["bType"] = "WAVE"}
-	--				};
+	self.waypoints = data.waypoints;
 
 	for k, s in ipairs(data.sources) do
-		table.insert(self.sources, Bs(self.x, self.y, 0.05, 0.5, s, true, 3));
+		table.insert(self.sources, Bs(self.x, self.y, s, true));
 	end
 	
-	self.func = addon.GetEnemyFunction(data.name);
+	self.func = addon.GetEnemyFunction(data.funcName);
 	
 	self.texture = self.parent:CreateTexture(nil, "BORDER");
 	self.texture:SetPoint("CENTER", self.parent, "BOTTOMLEFT", self.x, self.y);

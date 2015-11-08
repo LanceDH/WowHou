@@ -38,13 +38,19 @@ function Hero.new(x, y)
 	
 	self.sources = {};
 	
-	local sources = {{["x"] = 0, ["y"] = 25, ["speed"] = 400, ["dir"] = 1, ["bType"] = ""}
-					,{["x"] = 25, ["y"] = 0, ["speed"] = 400, ["dir"] = 1, ["bType"] = "WAVE"}
-					,{["x"] = -25, ["y"] = 0, ["speed"] = 400, ["dir"] = -1, ["bType"] = "WAVE"}
+	local sources = {{["x"] = 0, ["y"] = 25, ["speed"] = 400, ["dir"] = 1, ["bType"] = "", ["angle"] = 0, ["spread"] = 45
+						, ["arc"] = 90, ["interval"] = 0.1, ["rotSpeed"] = 1, ["count"] = 1}
+					,{["x"] = 25, ["y"] = 0, ["speed"] = 400, ["dir"] = 1, ["bType"] = "WAVE", ["angle"] = 0, ["spread"] = 45
+						, ["arc"] = 20, ["interval"] = 0.1, ["rotSpeed"] = 1, ["count"] = 1}
+					,{["x"] = -25, ["y"] = 0, ["speed"] = 400, ["dir"] = -1, ["bType"] = "WAVE", ["angle"] = 0, ["spread"] = 45
+						, ["arc"] = 20, ["interval"] = 0.1, ["rotSpeed"] = 1, ["count"] = 1}
+						
+					--,{["x"] = 25, ["y"] = 0, ["speed"] = 400, ["dir"] = 1, ["bType"] = "WAVE", ["angle"] = 90, ["spread"] = 45, ["arc"] = 90}
+					--,{["x"] = -25, ["y"] = 0, ["speed"] = 400, ["dir"] = 1, ["bType"] = "WAVE", ["angle"] = -90, ["spread"] = 45, ["arc"] = 90}
 					};
 	
 	for k, s in ipairs(sources) do
-		table.insert(self.sources, Bs(self.x, self.y, 0.1, 2, s, false, 1));
+		table.insert(self.sources, Bs(self.x, self.y, s, false));
 	end
 	
 	

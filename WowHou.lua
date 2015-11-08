@@ -3,6 +3,8 @@
 local GAMEFIELD_HEIGHT = 500;
 local GAMEFIELD_WIDTH = 300;
 
+addon.Levels = {};
+
 local _Bullet = addon.Bullet;
 local _Bs = addon.BulletStream;
 local _Enemy = addon.Enemy;
@@ -20,7 +22,8 @@ local _LastMemory = 0;
 local _MemHistory = {}
 local _MemMaxHistory = 40;
 
-local _TestLevel = {{["time"] = 2, ["name"] = "PlebTest", ["x"] = GAMEFIELD_WIDTH/3, ["y"] = GAMEFIELD_HEIGHT - 32}
+local _ActiveLevel = {{["time"] = 2, ["name"] = "PlebTest", ["funcName"] = "Waypoints", ["x"] = GAMEFIELD_WIDTH/4, ["y"] = GAMEFIELD_HEIGHT }
+					--,{["time"] = 2, ["name"] = "PlebTest", ["x"] = 3*GAMEFIELD_WIDTH/4, ["y"] = GAMEFIELD_HEIGHT }
 --{["time"] = 0.1, ["name"] = "BossTest", ["x"] = GAMEFIELD_WIDTH/2, ["y"] = GAMEFIELD_HEIGHT - 32}
 					--,{["time"] = 6, ["name"] = "PlebTest", ["x"] = GAMEFIELD_WIDTH/3, ["y"] = GAMEFIELD_HEIGHT - 32}
 					--,{["time"] = 8, ["name"] = "PlebTest", ["x"] = 2*GAMEFIELD_WIDTH/3, ["y"] = GAMEFIELD_HEIGHT - 32}
@@ -58,11 +61,7 @@ local function round(num, idp)
 	end
 	
 	return result
-	-- local ret = 0
-	-- if num >= 0 then
-		-- ret = tonumber(string.format("%." .. (idp or 0) .. "f", num))
-	-- end
-	-- return ret
+
 end
 
 local function MouseIsInPayfield()
@@ -168,6 +167,7 @@ local function CheckCollision()
 	end
 	
 	if(CheckHeroBulletCollision() ~= nil) then
+		
 		--_GamePaused = true;
 		--WH_GameFrame.mouse:SetTexture("Interface/MINIMAP/Minimap_shield_elite");
 	else
@@ -189,7 +189,7 @@ local function UpdateHero(elapsed)
 end
 
 local function ResetGamefield()
-	CopyLevelSpawns(_TestLevel);
+	CopyLevelSpawns(_ActiveLevel);
 	for k, v in ipairs(WH_GameFrame.dots) do
 		v:Hide();
 	end
@@ -212,6 +212,7 @@ local function HandleWaves()
 			data = addon.GetEnemyData(spawn.name);
 			data.x = spawn.x;
 			data.y = spawn.y;
+			data.funcName = spawn.funcName;
 			addon.CreateEnemy(data);
 			table.remove(_EnemyList, i);
 		end
@@ -243,7 +244,7 @@ local function InitMainframe()
 	
 	WH_GameFrame:SetScript("OnUpdate", function(self,elapsed) 
 			_elpasedTotal = _elpasedTotal + elapsed;
-			if (_GamePaused) then return; end
+			if (not MouseIsInPayfield() or _GamePaused) then return; end
 			
 			if (_elpasedTotal >= 1) then
 				_FPS = _TickCount;
@@ -371,8 +372,9 @@ local function countInactiveEnemies()
 	return count;
 end
 
+local debugText = {};
+
 local function debug_updatext()
-	local text = "";
 	
 	UpdateAddOnMemoryUsage();
 	
@@ -394,16 +396,17 @@ local function debug_updatext()
 		ILW_Debug.memHistory[k]:SetHeight(v/10);
 	end
 	
-	text = text .. _Mem .. "  "..#_MemHistory .. "\n"--" (".._MemMin..", ".._MemMax..")\n";
-	text = text .. "Memdif: " .. round(_Mem - _LastMemory, 1) .. "    FPS: " .. _FPS .. "\n";
-	text = text .. "Bullets: " .. #WH_GameFrame.dots .. " (" .. countInactiveBullets() ..")\n";
-	text = text .. "Enemy: " .. #WH_GameFrame.enemies .. " (" .. countInactiveEnemies() ..")\n";
-	text = text .. "Mouse: " .. (_InPlayfield and "in" or "out");
 	
-	ILW_Debug.text:SetText(text);
+	
+	debugText[1] = _Mem .. "  "..#_MemHistory--" (".._MemMin..", ".._MemMax..")\n";
+	debugText[2] = "Memdif: " .. round(_Mem - _LastMemory, 1) .. "    FPS: " .. _FPS;
+	debugText[3] = "Bullets: " .. #WH_GameFrame.dots .. " (" .. countInactiveBullets() ..")";
+	debugText[4] = "Enemy: " .. #WH_GameFrame.enemies .. " (" .. countInactiveEnemies() ..")";
+	debugText[5] = "Mouse: " .. (_InPlayfield and "in" or "out");
+	
+	ILW_Debug.text:SetText(table.concat(debugText, "\n"));
 	
 	_LastMemory = _Mem;
-	--ILW_Debug:SetHeight(ILW_Debug.text:GetStringHeight()+20)
 end
 
 local function UpdateMainFrameBG()

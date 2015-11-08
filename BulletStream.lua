@@ -25,7 +25,7 @@ setmetatable(Bs, {
   end,
 })
 
-function Bs.new(x, y, interval, rotSpeed, source, isEnemy, streams)
+function Bs.new(x, y, source, isEnemy)
 	local self = setmetatable({}, Bs)
 
 	self.x = x;
@@ -38,18 +38,19 @@ function Bs.new(x, y, interval, rotSpeed, source, isEnemy, streams)
 	end
 	self.elapsed = 0;--math.random(math.pi*2);
 	self.bullerTimer = 0;
-	self.interval = interval;
-	self.rotSpeed = rotSpeed;
+	self.interval = source.interval;
+	self.rotSpeed = source.rotSpeed;
 	self.parent = WH_GameFrameBulletOverlay;
 	self.source = source;
 	self.origin = origin;
-	self.streams = streams
+	self.streams = source.count
 	
 	if (not self.isEnemy) then
 		self.texture = self.parent:CreateTexture(nil, "BORDER");
-		self.texture:SetPoint("CENTER", self.parent, "BOTTOMLEFT", self.x, self.y);
+		self.texture:SetPoint("CENTER", self.parent, "BOTTOMLEFT", self.x + self.source.x-1, self.y + self.source.y);
 		self.texture:SetSize(32, 32);
 		self.texture:SetTexture("Interface/MINIMAP/ROTATING-MINIMAPARROW");
+		self.texture:SetRotation(0);
 	end
 
 	return self;
@@ -70,21 +71,19 @@ function Bs:SpwanBulletOfType(source)
 	local nr = self.streams;
 	
 	if source.bType == "WAVE" then
-		
-		local arc = 20;
-		local spread = 20;
-		local spacing = spread /(nr-1);
+
+		local spacing = source.spread /(nr-1);
 		if (nr == 1) then
-			spread = 0;
+			source.spread = 0;
 			spacing = 0;
 		end
 		
 		if (not self.isEnemy) then
-			self.texture:SetRotation(math.rad(-source.dir *(arc/2*math.sin(self.elapsed*self.rotSpeed))));
+			self.texture:SetRotation(math.rad(-source.dir *(source.arc / 2 * math.sin(self.elapsed*self.rotSpeed) + source.angle)));
 		end
 
-		for i=0, (nr > 1 and nr-1 or 1) do
-			bulletData.angle = source.dir *((spacing*i) -(spread/2) + (arc/2*math.sin(self.elapsed*self.rotSpeed)));
+		for i=0, nr-1 do
+			bulletData.angle = source.dir *((spacing*i) -(source.spread/2) + (source.arc/2*math.sin(self.elapsed*self.rotSpeed)+ source.angle));
 			addon.CreateBullet(bulletData);
 		end
 		
@@ -94,15 +93,28 @@ function Bs:SpwanBulletOfType(source)
 		local spacing = 360 /nr;
 		
 		for i=0, nr-1 do
-			bulletData.angle = source.dir*(spacing*i)-(360*self.elapsed*self.rotSpeed)%360;
+			bulletData.angle = source.dir*((spacing*i)-(360*self.elapsed*self.rotSpeed)%360 + source.angle);
 			addon.CreateBullet(bulletData);
 		end
-		
 		
 		return;
 	end
 
-	addon.CreateBullet(bulletData);
+	local spacing = source.spread /(nr-1);
+	if (nr == 1) then
+		source.spread = 0;
+		spacing = 0;
+	end
+	
+	if (not self.isEnemy) then
+		self.texture:SetRotation(math.rad(360 - source.angle));
+	end
+	
+	for i=0, nr-1 do
+		bulletData.angle = (-(source.spread/2) + (spacing*i) + source.angle)
+		addon.CreateBullet(bulletData);
+	end
+	--addon.CreateBullet(bulletData);
 	
 end
 
