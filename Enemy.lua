@@ -58,6 +58,7 @@ function Enemy.new(data)
 		self.isBoss = data.isBoss;
 	end
 	self.data = data;
+	self.owner = data.owner;
 	self.x = data.x;
 	self.y = data.y;
 	self.tX = data.x;
@@ -75,6 +76,9 @@ function Enemy.new(data)
 	self.waypointNr = 1;
 	self.isActive = true;
 	self.invulnerable = (self.isBoss and true or false);
+	if (data.invulnerable ~= nil and self.isBoss == false) then
+		self.invulnerable = data.invulnerable
+	end
 
 	if (not self.isBoss) then -- boss stuff gets added after the intro
 		for k, s in ipairs(data.sources) do
@@ -93,7 +97,7 @@ function Enemy.new(data)
 	self.healthbar:SetPoint("CENTER", self.parent, "BOTTOMLEFT", self.x-1, self.y - self.height/2 - 5);
 	self.healthbar:SetSize( self.health / self.healthMax * self.width, 3);
 	self.healthbar:SetTexture(0.8, 0.2, 0.2);
-	if (self.isBoss) then
+	if (self.isBoss or self.invulnerable) then
 		self.healthbar:Hide();
 	else
 		self.healthbar:Show();
@@ -102,7 +106,7 @@ function Enemy.new(data)
 	--self.healthbar:SetVertexColor(1, 0.3, 0.3)
 	
 	--self.texture:SetTexture("Interface\\AddOns\\WowHou\\Images\\UI-EJ-BOSS-Earthrager Ptah");
-
+	
 	table.insert(WH_GameFrame.enemies, self);
 	
 	data = nil;
@@ -146,8 +150,9 @@ function Enemy:Tick(elapsed)
 end
 
 function Enemy:Damage(amount)
-	if (self.invulnerable) then return; end
+	if (self.invulnerable) then return false; end
 	self.health = self.health - amount;
+	return true;
 end
 
 function Enemy:BossIntro(elapsed)
@@ -175,6 +180,7 @@ function Enemy:BossIntro(elapsed)
 				self.elapsed = 0;
 				PlaySound(self.data.intro);
 				self.introDur = self.data.introDur;
+				addon.ShowBossGossip(self.data.texture, self.data.name,  self.data.introText, self.data.introDur)
 			else
 				-- still moving
 				local angle = math.deg(math.atan2(xDif, yDif)) + 90;
@@ -211,6 +217,7 @@ function Enemy:Reuse(data)
 		self.isBoss = data.isBoss;
 	end
 	self.data = data;
+	self.owner = data.owner;
 	self.x = data.x;
     self.y = data.y;
 	self.tX = data.x;
@@ -227,6 +234,9 @@ function Enemy:Reuse(data)
 	self.waypointNr = 1;
 	self.isActive = true;
 	self.invulnerable = (self.isBoss and true or false);
+	if (data.invulnerable~= nil and self.isBoss == false) then
+		self.invulnerable = data.invulnerable
+	end
 
 	if (not self.isBoss) then -- boss stuff gets added after the intro
 		for k, s in ipairs(data.sources) do
@@ -241,7 +251,7 @@ function Enemy:Reuse(data)
 	
 	self.healthbar:SetPoint("BOTTOMLEFT", self.parent, "BOTTOMLEFT", self.x - self.width/2-1, self.y - self.height/2 - 5);
 	self.healthbar:SetSize(self.width, 5);
-	if (self.isBoss) then
+	if (self.isBoss or self.invulnerable) then
 		self.healthbar:Hide();
 	else
 		self.healthbar:Show();
@@ -255,4 +265,11 @@ function Enemy:Hide()
 	self.healthbar:Hide();
 	self.sources = {};
 	self.isActive = false;
+	-- Also hide all the adds if any
+	self.owner = nil;
+	for k, v in ipairs(WH_GameFrame.enemies) do
+		if (v.owner == self) then
+			v:Hide();
+		end
+	end
 end

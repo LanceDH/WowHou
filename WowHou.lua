@@ -20,7 +20,7 @@ local _FPS = 0;
 local _LastMemory = 0;
 
 local _MemHistory = {}
-local _MemMaxHistory = 40;
+local _MemMaxHistory = 100;
 
 local _EnemyList = {};
 
@@ -44,6 +44,13 @@ local function CopyLevelSpawns(list)
 	end
 end
 
+function addon.ShowBossGossip(texture, name, text, duration)
+	WH_BossGossipFrame.duration = duration;
+	WH_BossGossipFrame.image:SetTexture(texture);
+	WH_BossGossipFrame.name:SetText(name);
+	WH_BossGossipFrame.gossip:SetText(text);
+	WH_BossGossipFrame:Show();
+end
 
 local function round(num, idp)
 	local result = 0;
@@ -115,8 +122,10 @@ local function CheckHeroBulletCollision(bullet)
 					vert = bullet.tY - enemy.tY;
 					distance = math.sqrt(math.pow(hor, 2) + math.pow(vert, 2));
 					if (distance <= bullet.radius + enemy.radius) then
-						bullet:Hide();
-						enemy:Damage(1);
+						if (enemy:Damage(1)) then
+							bullet:Hide();
+						end
+						
 					end
 				end
 			end
@@ -246,6 +255,20 @@ local function InitMainframe()
 	WH_BossHealthFrame.health:SetWidth(200);
 	WH_BossHealthFrame:Hide();
 
+	WH_BossGossipFrame.elapsed = 0;
+	WH_BossGossipFrame.duration = 0;
+	WH_BossGossipFrame:SetScript("OnUpdate", function(self, elapsed) 
+						if (self.duration == 0) then return; end
+						
+						self.elapsed = self.elapsed + elapsed;
+						
+						if (self.elapsed >= self.duration) then
+							self:Hide();
+							self.duration = 0;
+							self.elapsed = 0;
+						end
+					end);
+	
 	
 	--_Enemy(GAMEFIELD_WIDTH/2, GAMEFIELD_HEIGHT - 32);
 	
