@@ -2,6 +2,59 @@
      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
      xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ../../FrameXML/UI.xsd">
 	
+	<Button name="WH_LevelSelectTemplate" inherits="SecureFrameTemplate" virtual="true">
+		<size x="256" y="128"/>
+		
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture file="Interface/LFGFRAME/UI-LFG-BACKGROUND-HeroicScenario" parentKey="image">
+					<Anchors>
+						<Anchor point="TOPLEFT"/>
+						<Anchor point="BOTTOMRIGHT"/>
+					</Anchors>
+				</Texture>
+				
+				<Texture  alphaMode="BLEND">
+					<Anchors>
+						<Anchor point="TOPLEFT"/>
+						<Anchor point="BOTTOMRIGHT"/>
+					</Anchors>
+					<Color r="1" g="1" b="1" a="0.00"/>
+				</Texture>
+			</Layer>
+			<Layer level="ARTWORK">
+				<FontString inherits="QuestTitleFont" maxLines="2" justifyH="CENTER" justifyV="BOTTOM" parentKey="text" text="????">
+
+					<Anchors>
+						<Anchor point="TOPLEFT" x="5" y="-5" />
+						<Anchor point="BOTTOMRIGHT" x="-5" y="5" />
+					</Anchors>
+					<Color r="0.9" g="0.75" b="0" a="1"/>
+				</FontString>
+			</Layer>
+			<Layer level="HIGHLIGHT">
+			<!--
+				<Texture  alphaMode="ADD">
+					<Anchors>
+						<Anchor point="TOPLEFT"/>
+						<Anchor point="BOTTOMRIGHT"/>
+					</Anchors>
+					<Color r="1" g="0.85" b="0" a="0.1"/>
+				</Texture>
+			-->
+				<Texture file="Interface/Calendar/Highlights" alphaMode="ADD">
+					<Anchors>
+						<Anchor point="TOPLEFT"/>
+						<Anchor point="BOTTOMRIGHT"/>
+					</Anchors>
+					<TexCoords left="0.01" right="0.33" top="0.01" bottom="0.67"/>
+					<Color r="1" g="1" b="1" a="0.3"/>
+				</Texture>
+			</Layer>
+		</Layers>
+		
+	</Button>
+	
 	<Frame name="WH_MainFrame" toplevel="true" movable="true" enableMouse="true" hidden="false" parent="UIParent" frameStrata="MEDIUM" inherits="SecureFrameTemplate"> 
 		<Size x="364" y="580"/>
 		
@@ -123,15 +176,65 @@
 							</Anchors>
 							<TexCoords left="0.10" right="0.9" top="0.30" bottom="0.70"/>
 						</Texture>
+						<FontString inherits="QuestTitleFont" maxLines="1" justifyH="CENTER" justifyV="CENTER" parentKey="text" text="BossName">
+
+							<Anchors>
+								<Anchor point="TOPLEFT" x="5" y="-5" />
+								<Anchor point="BOTTOMRIGHT" x="-5" y="5" />
+							</Anchors>
+							<Color r="0.9" g="0.75" b="0" a="1"/>
+						</FontString>
 					</Layer>
 				</Layers>
 			</Frame>
 		</Frames>
 		
 	</Frame>
+		
+	<Frame name="WH_LevelSelect" hidden="false" enableMouse="true"  parentKey="levelSelect" parent="WH_MainFrame" frameStrata="medium">
+		<Anchors>
+			<Anchor point="TOPLEFT" relativeTo="WH_GameFrame"/>
+			<Anchor point="BOTTOMRIGHT" relativeTo="WH_GameFrame"/>
+		</Anchors>
+	
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture>
+					<Anchors>
+						<Anchor point="TOPLEFT"/>
+						<Anchor point="BOTTOMRIGHT"/>
+					</Anchors>
+					<Color r="0.1" g="0.1" b="0.1" a="1"/>
+				</Texture>
+			</Layer>
+		</Layers>
+		
+		<Frames>
+			<Button name="$parentLevel1" hidden="true" inherits="WH_LevelSelectTemplate">
+				<Anchors>
+					<Anchor point="TOP" y="-64"/>
+				</Anchors>
+			</Button>
+			
+			<Button  name="$parentLevel2" hidden="true" inherits="WH_LevelSelectTemplate">
+				<Anchors>
+					<Anchor point="TOP" relativeTo="$parentLevel1" relativePoint="BOTTOM" y="-16"/>
+				</Anchors>
+			</Button>
+			
+			<Button  name="$parentLevel3" hidden="true" inherits="WH_LevelSelectTemplate">
+				<Anchors>
+					<Anchor point="TOP" relativeTo="$parentLevel2" relativePoint="BOTTOM" y="-16"/>
+				</Anchors>
+			</Button>
 		</Frames>
 		
 	</Frame>
+		
+		</Frames>
+		
+	</Frame>
+	
 	
 	
 

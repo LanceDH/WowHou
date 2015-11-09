@@ -2,7 +2,7 @@
 ## Title: WowHou
 ## Notes: Testing 123.
 ## Author: LanceDH
-## Version: 0.3
+## Version: 0.4
 ## SavedVariablesPerCharacter: 
 WowHou.xml
 Bullet.lua
@@ -12,3 +12,6 @@ EnemyData.lua
 Enemy.lua
 Hero.lua
 WowHou.lua
+
+Levels/Deadmines.lua
+Levels/Ragefire.lua

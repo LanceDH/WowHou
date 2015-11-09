@@ -18,29 +18,15 @@ function addon.GetEnemyFunction(name)
 	return nil;
 end
 
-local function BossTest(enemy, elapsed)
-
-	enemy.tX = enemy.x + math.sin(enemy.elapsed) * 50;
-	enemy.tY = enemy.y;
-	
-	
-	-- if (enemy.phase == PHASE1 and enemy.elapsed > 10) then
-		-- enemy.phase = PHASE2;
-		-- enemy.sources = {};
-		-- local sources = {{["x"] = -50, ["y"] = -32, ["speed"] = 100, ["dir"] = 1, ["bType"] = "WAVE"}
-						-- ,{["x"] = 50, ["y"] = -32, ["speed"] = 100, ["dir"] = -1, ["bType"] = "WAVE"}			
-						-- };			
-		-- table.insert(enemy.sources, Bs(enemy.x, enemy.y, 0.1, 3, sources));
-	-- end
-	
-	-- if (enemy.elapsed > 4) then
-		-- enemy.texture:Hide();
-	-- end
-	
+local function Glubtok(enemy, elapsed)
+	if (enemy.phase == 2) then
+		enemy.tX = enemy.x + math.sin(enemy.elapsed) * 50;
+		enemy.tY = enemy.y;
+	end
 	return enemy
 end
 
-table.insert(addon.enemyFunctions, { ["name"] = "BossTest", ["func"] = function(enemy, elapsed) return BossTest(enemy, elapsed); end});
+table.insert(addon.enemyFunctions, { ["name"] = "Glubtok", ["func"] = function(enemy, elapsed) return Glubtok(enemy, elapsed); end});
 
 local function PlebTest(enemy, elapsed)
 
@@ -60,9 +46,9 @@ local function WayPoints(enemy, elapsed)
 	local yDif = 0;
 	local distance = 0;
 	
-	if (enemy.waypoints[1] ~= nil) then
-		targetX = enemy.waypoints[1].x;
-		targetY = enemy.waypoints[1].y;
+	if (enemy.waypoints[enemy.waypointNr] ~= nil) then
+		targetX = enemy.waypoints[enemy.waypointNr].x;
+		targetY = enemy.waypoints[enemy.waypointNr].y;
 
 		xDif = enemy.x - targetX;
 		yDif = enemy.y - targetY;
@@ -71,7 +57,7 @@ local function WayPoints(enemy, elapsed)
 		if (distance <= travelDistance ) then
 			enemy.x = targetX;
 			enemy.y = targetY;
-			table.remove(enemy.waypoints, 1);
+			enemy.waypointNr = enemy.waypointNr + 1;
 		else
 		
 			local angle = math.deg(math.atan2(xDif, yDif)) + 90;

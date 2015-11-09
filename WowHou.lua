@@ -3,8 +3,8 @@
 local GAMEFIELD_HEIGHT = 500;
 local GAMEFIELD_WIDTH = 300;
 
-addon.Levels = {};
-
+addon.Levels = {}
+local _Levels = addon.Levels;
 local _Bullet = addon.Bullet;
 local _Bs = addon.BulletStream;
 local _Enemy = addon.Enemy;
@@ -21,13 +21,6 @@ local _LastMemory = 0;
 
 local _MemHistory = {}
 local _MemMaxHistory = 40;
-
-local _ActiveLevel = {{["time"] = 2, ["name"] = "PlebTest", ["funcName"] = "Waypoints", ["x"] = GAMEFIELD_WIDTH/4, ["y"] = GAMEFIELD_HEIGHT }
-					--,{["time"] = 2, ["name"] = "PlebTest", ["x"] = 3*GAMEFIELD_WIDTH/4, ["y"] = GAMEFIELD_HEIGHT }
-					,{["time"] = 4, ["name"] = "BossTest", ["funcName"] = "BossTest", ["x"] = GAMEFIELD_WIDTH/2, ["y"] = GAMEFIELD_HEIGHT - 64}
-					--,{["time"] = 6, ["name"] = "PlebTest", ["x"] = GAMEFIELD_WIDTH/3, ["y"] = GAMEFIELD_HEIGHT - 32}
-					--,{["time"] = 8, ["name"] = "PlebTest", ["x"] = 2*GAMEFIELD_WIDTH/3, ["y"] = GAMEFIELD_HEIGHT - 32}
-					};
 
 local _EnemyList = {};
 
@@ -50,6 +43,7 @@ local function CopyLevelSpawns(list)
 		table.insert(_EnemyList, temp);
 	end
 end
+
 
 local function round(num, idp)
 	local result = 0;
@@ -200,7 +194,7 @@ local function UpdateHealthbar()
 end
 
 local function ResetGamefield()
-	CopyLevelSpawns(_ActiveLevel);
+	--CopyLevelSpawns(_ActiveLevel);
 	for k, v in ipairs(WH_GameFrame.dots) do
 		v:Hide();
 	end
@@ -218,11 +212,11 @@ local function HandleWaves()
 	for i= #_EnemyList, 1, -1 do
 		spawn = _EnemyList[i];
 		if (spawn.time < _GameTimer) then
-			data = addon.GetEnemyData(spawn.name);
-			data.x = spawn.x;
-			data.y = spawn.y;
-			data.funcName = spawn.funcName;
-			addon.CreateEnemy(data);
+			--data = addon.GetEnemyData(spawn.name);
+			--data.x = spawn.x;
+			--data.y = spawn.y;
+			--data.funcName = spawn.funcName;
+			addon.CreateEnemy(spawn);
 			table.remove(_EnemyList, i);
 		end
 	end
@@ -247,6 +241,7 @@ local function InitMainframe()
 	WH_GameFrameHeroOverlay:SetFrameLevel(WH_GameFrame:GetFrameLevel() + 2);
 	WH_GameFrameBulletOverlay:SetFrameLevel(WH_GameFrame:GetFrameLevel() + 3);
 	WH_BorderOverlay:SetFrameLevel(WH_GameFrame:GetFrameLevel() + 4);
+	WH_LevelSelect:SetFrameLevel(WH_GameFrame:GetFrameLevel() + 5);
 	
 	WH_BossHealthFrame.health:SetWidth(200);
 	WH_BossHealthFrame:Hide();
@@ -279,10 +274,6 @@ local function InitMainframe()
 				UpdateHero(_tick);
 				CheckCollision();
 				UpdateHealthbar();
-				WH_GameFrameEnemyOverlay:SetFrameLevel(WH_GameFrame:GetFrameLevel() + 1);
-				WH_GameFrameHeroOverlay:SetFrameLevel(WH_GameFrame:GetFrameLevel() + 2);
-				WH_GameFrameBulletOverlay:SetFrameLevel(WH_GameFrame:GetFrameLevel() + 3);
-				WH_BorderOverlay:SetFrameLevel(WH_GameFrame:GetFrameLevel() + 4);
 				
 				_Score = _Score + _tick;
 				WH_BorderOverlay.Score:SetText("Score: " .. round(_Score*10, 0));
@@ -308,6 +299,20 @@ local function InitMainframe()
 	
 end
 
+local function InitLevelSelect()
+	for k, v in ipairs(_Levels) do
+		local button = _G["WH_LevelSelectLevel"..k];
+		button.text:SetText(v.name);
+		button.image:SetTexture(v.image);
+		
+		button:SetScript("OnClick", function()
+						CopyLevelSpawns(v.enemies);
+						WH_LevelSelect:Hide();
+					end);
+		button:Show();
+	end
+end
+
 local TEST_LoadFrame = CreateFrame("FRAME", "TEST_LoadFrame"); 
 TEST_LoadFrame:RegisterEvent("ADDON_LOADED");
 TEST_LoadFrame:RegisterEvent("PLAYER_LOGOUT");
@@ -319,6 +324,7 @@ function TEST_LoadFrame:ADDON_LOADED(loadedAddon)
 	self:UnregisterEvent("ADDON_LOADED");
 
 	InitMainframe();
+	InitLevelSelect()
 	ILWCreateDebugThingy();
 	
 	self.ADDON_LOADED = nil;
@@ -337,16 +343,8 @@ local function TESTGAMESlash(msg, editbox)
 	if msg ~= nil then
 		--MouseHitsDot()
 	end
-	local a = 1;
-	local b = 2;
-	print(round(1.2345))
-	print(round(1.2345,1))
-	print(round(1.2345,2))
-	print(round(1.2345,3))
-	print(round(-1.2345))
-	print(round(-1.2345,1))
-	print(round(-1.2345,2))
-	print(round(-1.2345,3))
+	
+	
 end
 SlashCmdList["TESTGAME"] = TESTGAMESlash
 
@@ -408,9 +406,7 @@ local function debug_updatext()
 	for k, v in ipairs(_MemHistory) do
 		ILW_Debug.memHistory[k]:SetHeight(v/10);
 	end
-	
-	
-	
+
 	debugText[1] = _Mem .. "  "..#_MemHistory--" (".._MemMin..", ".._MemMax..")\n";
 	debugText[2] = "Memdif: " .. round(_Mem - _LastMemory, 1) .. "    FPS: " .. _FPS;
 	debugText[3] = "Bullets: " .. #WH_GameFrame.dots .. " (" .. countInactiveBullets() ..")";
@@ -440,12 +436,10 @@ local function DebugToggleLockbutton()
 		ILW_Debug_MoveButton.tex:SetVertexColor(DEFAULT_LOCKVERTEX_OFF, DEFAULT_LOCKVERTEX_OFF, DEFAULT_LOCKVERTEX_OFF )
 		PlaySound("igMainMenuOptionCheckBoxOff");
 		ILW_Debug:EnableMouse(false)
-			
 	else	
 		ILW_Debug_MoveButton.tex:SetVertexColor(DEFAULT_LOCKVERTEX_ON, DEFAULT_LOCKVERTEX_ON, DEFAULT_LOCKVERTEX_ON )
 		PlaySound("igMainMenuOptionCheckBoxOn");
 		ILW_Debug:EnableMouse(true)
-			
 	end
 		UpdateMainFrameBG()
 end
@@ -489,7 +483,7 @@ ILW_Debug.memHistory = {}
 local historywidth = debugWidth/_MemMaxHistory;
 
 for i=0, _MemMaxHistory-1 do
-	local temp = ILW_Debug:CreateTexture(nil, "ARTWORK");
+	local temp = ILW_Debug:CreateTexture(nil, "OVERLAY");
 	temp:SetPoint("BOTTOMLEFT", ILW_Debug, "TOPLEFT", historywidth * i, 5);
 	temp:SetSize(historywidth-1, 0);
 	temp:SetTexture(1, 1, 1);
@@ -500,10 +494,10 @@ end
 ILW_Debug.memHeights = {}
 
 for i=0, 5 do
-	local temp = ILW_Debug:CreateTexture(nil, "OVERLAY");
+	local temp = ILW_Debug:CreateTexture(nil, "ARTWORK");
 	temp:SetPoint("BOTTOMLEFT", ILW_Debug, "TOPLEFT", 0, 5+i*10);
 	temp:SetSize(debugWidth, 1);
-	temp:SetTexture(0.5, 0.5, 0.5);
+	temp:SetTexture(0.7, 0.7, 0.7);
 	temp:Show();
 	table.insert(ILW_Debug.memHistory, temp);
 end
