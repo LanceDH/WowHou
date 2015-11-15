@@ -44,9 +44,6 @@ function Hero.new(x, y)
 						-- , ["arc"] = 20, ["interval"] = 0.1, ["rotSpeed"] = 1, ["count"] = 1}
 					-- ,{["x"] = -25, ["y"] = 0, ["speed"] = 400, ["dir"] = -1, ["bType"] = "WAVE", ["angle"] = 0, ["spread"] = 45
 						-- , ["arc"] = 20, ["interval"] = 0.1, ["rotSpeed"] = 1, ["count"] = 1}
-						
-					--,{["x"] = 25, ["y"] = 0, ["speed"] = 400, ["dir"] = 1, ["bType"] = "WAVE", ["angle"] = 90, ["spread"] = 45, ["arc"] = 90}
-					--,{["x"] = -25, ["y"] = 0, ["speed"] = 400, ["dir"] = 1, ["bType"] = "WAVE", ["angle"] = -90, ["spread"] = 45, ["arc"] = 90}
 					};
 	
 	for k, s in ipairs(sources) do

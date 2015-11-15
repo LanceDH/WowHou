@@ -12,6 +12,10 @@ local _Hero = addon.Hero;
 local _GamePaused = true;
 local _InPlayfield = false;
 
+local _GameState = 1;
+local STATE_LEVELSELECT = 1;
+local STATE_INLEVEL = 2;
+
 local _tick = 0;
 
 local _elpasedTotal = 0;
@@ -46,7 +50,9 @@ end
 
 function addon.ShowBossGossip(texture, name, text, duration)
 	WH_BossGossipFrame.duration = duration;
-	WH_BossGossipFrame.image:SetTexture(texture);
+	
+	SetPortraitToTexture(WH_BossGossipFrame.image, texture)
+	--WH_BossGossipFrame.image:SetTexture(texture);
 	WH_BossGossipFrame.name:SetText(name);
 	WH_BossGossipFrame.gossip:SetText(text);
 	WH_BossGossipFrame:Show();
@@ -115,9 +121,9 @@ local function CheckHeroBulletCollision(bullet)
 	local distance = 0;
 	
 	for kb, bullet in ipairs(WH_GameFrame.dots) do
-		if (bullet.active and not bullet.isEnemy ) then
+		if (bullet.isActive and not bullet.isEnemy ) then
 			for ke, enemy in ipairs(WH_GameFrame.enemies) do
-				if (enemy.texture:IsShown()) then
+				if (enemy.isActive) then
 					hor = bullet.tX - enemy.tX;
 					vert = bullet.tY - enemy.tY;
 					distance = math.sqrt(math.pow(hor, 2) + math.pow(vert, 2));
@@ -147,7 +153,7 @@ local function MouseHitsDot()
 	local vert = 0;
 	
 	for k, bullet in ipairs(WH_GameFrame.dots) do
-		if (bullet.isEnemy and bullet.active) then
+		if (bullet.isEnemy and bullet.isActive) then
 			hor = bullet.tX - mouseX;
 			vert = bullet.tY - mouseY;
 			distance = math.sqrt(math.pow(hor, 2) + math.pow(vert, 2));
@@ -258,7 +264,7 @@ local function InitMainframe()
 	WH_BossGossipFrame.elapsed = 0;
 	WH_BossGossipFrame.duration = 0;
 	WH_BossGossipFrame:SetScript("OnUpdate", function(self, elapsed) 
-						if (self.duration == 0) then return; end
+						if (self.duration == 0 or _GamePaused) then return; end
 						
 						self.elapsed = self.elapsed + elapsed;
 						
@@ -331,6 +337,7 @@ local function InitLevelSelect()
 		button:SetScript("OnClick", function()
 						CopyLevelSpawns(v.enemies);
 						WH_LevelSelect:Hide();
+						_GameState = STATE_INLEVEL;
 					end);
 		button:Show();
 	end
@@ -391,7 +398,7 @@ local function countInactiveBullets()
 	local count = 0;
 	
 	for k, dot in ipairs(WH_GameFrame.dots) do
-		if (not dot.active) then
+		if (not dot.isActive) then
 			count = count + 1;
 		end
 	end
@@ -403,7 +410,7 @@ local function countInactiveEnemies()
 	local count = 0;
 	
 	for k, e in ipairs(WH_GameFrame.enemies) do
-		if (not e.texture:IsShown()) then
+		if (not e.isActive) then
 			count = count + 1;
 		end
 	end
@@ -431,14 +438,22 @@ local function debug_updatext()
 	
 	table.insert(_MemHistory, _Mem);
 
-	local prevheight = -1;
+	local prevheight = 0;
 	for k, v in ipairs(_MemHistory) do
 		ILW_Debug.memHistory[k]:SetPoint("BOTTOM", ILW_Debug, "TOP", 0, 5 + v/10);
 		ILW_Debug.memHistory[k]:Show();
+		ILW_Debug.memHistory[k]:SetHeight(1);
+		if (prevheight > round(v/10, 0)) then
+			ILW_Debug.memHistory[k]:SetHeight((prevheight - round(v/10, 0) > 1 and prevheight - round(v/10, 0) or 1));
+		elseif (k>1 and prevheight < round(v/10, 0)) then
+			ILW_Debug.memHistory[k]:SetPoint("BOTTOM", ILW_Debug, "TOP", 0, 5 + prevheight);
+			ILW_Debug.memHistory[k]:SetHeight((round(v/10, 0) - prevheight > 1 and round(v/10, 0) - prevheight or 1));
+		end
+		prevheight = round(v/10, 0);
 		--ILW_Debug.memHistory[k]:SetHeight(v/10);
 	end
 
-	debugText[1] = _Mem .. "  "..#_MemHistory--" (".._MemMin..", ".._MemMax..")\n";
+	debugText[1] = "State: " .. _GameState .. "    Mem: " .. _Mem --" (".._MemMin..", ".._MemMax..")\n";
 	debugText[2] = "Memdif: " .. round(_Mem - _LastMemory, 1) .. "    FPS: " .. _FPS;
 	debugText[3] = "Bullets: " .. #WH_GameFrame.dots .. " (" .. countInactiveBullets() ..")";
 	debugText[4] = "Enemy: " .. #WH_GameFrame.enemies .. " (" .. countInactiveEnemies() ..")";

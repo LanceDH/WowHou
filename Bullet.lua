@@ -25,7 +25,7 @@ setmetatable(Bullet, {
 local function GetFirstInactiveBullet()
 
 	for k, dot in ipairs(WH_GameFrame.dots) do
-		if (not dot.active) then
+		if (not dot.isActive) then
 			return dot;
 		end
 	end
@@ -50,7 +50,7 @@ function Bullet.new(data)
 		self = inactive
 	end
 
-	self.active = true;
+	self.isActive = true;
 	self.x = data.x;
 	self.y = data.y;
 	self.tX = data.x;
@@ -94,7 +94,7 @@ function Bullet:UpdateTexture()
 end
 
 function Bullet:UpdatePos(elapsed)
-	if (not self.active) then return; end
+	if (not self.isActive) then return; end
 
 	self.elapsed = self.elapsed + elapsed;
 	
@@ -127,7 +127,7 @@ function Bullet:UpdatePos(elapsed)
 end
 
 function Bullet:Hide()	
-	self.active = false;
+	self.isActive = false;
 	self.x = -16;
 	self.y = -16;
 	self.speed = 0;

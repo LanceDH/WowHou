@@ -49,13 +49,21 @@ function Enemy.new(data)
 		self.name = ""..#WH_GameFrame.enemies;
 		self.parent = WH_GameFrameEnemyOverlay;
 		
-		self.texture = self.parent:CreateTexture(nil, "BORDER");
-		self.healthbar = self.parent:CreateTexture(nil, "BORDER");
+		self.frame = CreateFrame("frame", self.name, WH_GameFrameEnemyOverlay, "WH_EnemyFrameTemplateTemplate")
+		self.frame:SetPoint("CENTER", self.parent, "BOTTOMLEFT", self.x, self.y);
+		-- self.texture = self.parent:CreateTexture(nil, "BACKGROUND");
+		-- self.healthbar = self.parent:CreateTexture(nil, "BACKGROUND");
+		-- self.border = self.parent:CreateTexture(nil, "BORDER");
+
+		-- self.border:SetSize(64, 64);
+		-- self.border:SetTexture("Interface/Garrison/GarrLanding-TradeskillTimerFill");
+		-- self.border:Hide()
 		
 		table.insert(WH_GameFrame.enemies, self);
 	else
 		self = inactive;
 	end
+	
 	
 
 	self.phase = PHASE0;
@@ -81,6 +89,11 @@ function Enemy.new(data)
 	self.waypoints = data.waypoints;
 	self.waypointNr = 1;
 	self.isActive = true;
+	
+	self.frame:Show();
+	self.frame:SetSize(self.width, self.height);
+	self.frame.image:SetSize(self.width, self.height);
+	
 	self.invulnerable = (self.isBoss and true or false);
 	if (data.invulnerable ~= nil and self.isBoss == false) then
 		self.invulnerable = data.invulnerable
@@ -94,32 +107,22 @@ function Enemy.new(data)
 	
 	self.func = data.func;
 	
-	
-	self.texture:SetPoint("CENTER", self.parent, "BOTTOMLEFT", self.x, self.y);
-	self.texture:SetSize(self.width, self.height);
-	self.texture:SetTexture(data.texture);
-	self.texture:Show();
-	
-	self.healthbar:SetPoint("CENTER", self.parent, "BOTTOMLEFT", self.x-1, self.y - self.height/2 - 5);
-	self.healthbar:SetSize( self.health / self.healthMax * self.width, 3);
-	self.healthbar:SetTexture(0.8, 0.2, 0.2);
-	if (self.isBoss or self.invulnerable) then
-		self.healthbar:Hide();
-	else
-		self.healthbar:Show();
+	self.frame.image:SetTexture(data.texture);
+	if (self.isBoss) then
+		self.frame.image:SetSize(self.height, self.height);
+		SetPortraitToTexture(self.frame.image, data.texture)
 	end
-	--self.healthbar:SetTexture("Interface/CHARACTERFRAME/BarFill");
-	--self.healthbar:SetVertexColor(1, 0.3, 0.3)
+
+	if (self.isBoss or self.invulnerable) then
+		self.frame.healthbar:Hide();
+	else
+		self.frame.healthbar:Show();
+	end
 	
-	--self.texture:SetTexture("Interface\\AddOns\\WowHou\\Images\\UI-EJ-BOSS-Earthrager Ptah");
-	
-	
-	
-	--data = nil;
 end
 
 function Enemy:Tick(elapsed)
-	if (not self.texture:IsShown()) then return; end
+	if (not self.isActive) then return; end
 
 	if (self.health <= 0) then
 		self:Hide();
@@ -139,11 +142,9 @@ function Enemy:Tick(elapsed)
 		s:Tick(elapsed);
 	end
 	
-	self.texture:ClearAllPoints();
-	self.texture:SetPoint("CENTER", self.parent, "BOTTOMLEFT", self.tX, self.tY);
-	self.healthbar:ClearAllPoints();
-	self.healthbar:SetPoint("BOTTOMLEFT", self.parent, "BOTTOMLEFT", self.x - self.width/2, self.y - self.height/2 - 5);
-	self.healthbar:SetSize( self.health / self.healthMax * self.width, 3);
+	self.frame.image:ClearAllPoints();
+	self.frame.image:SetPoint("CENTER", self.parent, "BOTTOMLEFT", self.tX, self.tY);
+	self.frame.healthbar:SetSize( self.health / self.healthMax * self.width, 3);
 	
 	local x = self.tX;
 	local y = self.tY;
@@ -217,8 +218,8 @@ function Enemy:BossIntro(elapsed)
 end
 
 function Enemy:Hide()
-	self.texture:Hide();
-	self.healthbar:Hide();
+	self.frame:Hide();
+	-- self.healthbar:Hide();
 	self.sources = {};
 	self.isActive = false;
 	-- Also hide all the adds if any

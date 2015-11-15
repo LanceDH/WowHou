@@ -2,6 +2,37 @@
      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
      xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ../../FrameXML/UI.xsd">
 	
+	<Frame name="WH_EnemyFrameTemplateTemplate" inherits="SecureFrameTemplate" virtual="true">
+		<size x="64" y="64"/>
+		
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture parentKey="image">
+					<Anchors>
+						<Anchor point="TOPLEFT"/>
+						<Anchor point="BOTTOMRIGHT"/>
+					</Anchors>
+				</Texture>
+				
+				<Texture parentKey="healthbar">
+					<size x="64" y="3"/>
+					<Anchors>
+						<Anchor point="TOPLEFT" relstivePoint="BOTTOMLEFT" y="-5"/>
+					</Anchors>
+					<Color r="0.8" g="0.2" b="0.2"/>
+				</Texture>
+			</Layer>
+			<Layer level="BORDER">
+				<Texture parentKey="border">
+					<Anchors>
+						<Anchor point="TOPLEFT"/>
+						<Anchor point="BOTTOMRIGHT"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+	</Frame>
+	
 	<Button name="WH_LevelSelectTemplate" inherits="SecureFrameTemplate" virtual="true">
 		<size x="256" y="128"/>
 		
@@ -174,16 +205,24 @@
 					</Layer>
 					<Layer level="ARTWORK">
 						<Texture file="Interface/ENCOUNTERJOURNAL/UI-EJ-BOSS-Foe Reaper 5000" parentKey="image">
-							<Size x="128" y="64"/>
+							<Size x="64" y="64"/>
 							<Anchors>
-								<Anchor point="TOPLEFT"/>
+								<Anchor point="CENTER" relativePoint="LEFT" x="47"/>
 							</Anchors>
+						</Texture>
+						
+						<Texture file="Interface/TALENTFRAME/spec-filagree">
+							<Size x="74" y="74"/>
+							<Anchors>
+								<Anchor point="CENTER" relativePoint="LEFT" x="47"/>
+							</Anchors>
+							<TexCoords left="0.012" right="0.262" top="0.5" bottom="0.75"/>
 						</Texture>
 						
 						<FontString name="$perentBossName" inherits="QuestTitleFont" maxLines="1" justifyH="LEFT" justifyV="TOP" hidden="false" parentKey="name" text="???">
 							<Size y="20"/>
 							<Anchors>
-								<Anchor point="TOPLEFT" x="128" y="-5" />
+								<Anchor point="TOPLEFT" x="90" y="-5" />
 								<Anchor point="RIGHT" x="-10" />
 							</Anchors>
 							<Color r="0.9" g="0.75" b="0" a="1"/>

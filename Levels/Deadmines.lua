@@ -98,7 +98,7 @@ end
 							-- , ["width"] = 32, ["height"] = 32, ["speed"] = 100, ["health"] = 50, ["texture"] = "Interface/WORLDSTATEFRAME/OrcHead", ["sources"] = {BS_LOW_SIDEWAYS}
 							-- , ["waypoints"] = {{["x"] = GAMEFIELD_WIDTH/3, ["y"]=GAMEFIELD_HEIGHT/2}}})
 table.insert(level.enemies , {["time"] = 2, ["name"] = "Glubtok", ["func"] = function(enemy, elapsed) return Glubtok(enemy, elapsed); end, ["x"] = GAMEFIELD_WIDTH/2, ["y"] = GAMEFIELD_HEIGHT
-							, ["width"] = 128, ["height"] = 64, ["speed"] = 100, ["health"] = 200, ["isBoss"] = true, ["texture"] = "Interface/ENCOUNTERJOURNAL/UI-EJ-BOSS-Glubtok"
+							, ["width"] = 128, ["height"] = 64, ["speed"] = 100, ["health"] = 200, ["isBoss"] = true, ["texture"] = "Interface/AddOns/WowHou/Images/BossGlubtok" --"Interface/ENCOUNTERJOURNAL/UI-EJ-BOSS-Glubtok"
 							, ["sources"] = {BS_BOSS_DEFAULTLEFT, BS_BOSS_DEFAULTRIGHT}, ["intro"] = "VO_DM_GlubtokHead1_Aggro01", ["introDur"] = 4, ["introText"] = "Glubtok show you da power of de arcane!"
 							, ["waypoints"] = {{["x"] = GAMEFIELD_WIDTH/2, ["y"]=GAMEFIELD_HEIGHT - 64}}})
 							

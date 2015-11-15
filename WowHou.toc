@@ -2,7 +2,7 @@
 ## Title: WowHou
 ## Notes: Testing 123.
 ## Author: LanceDH
-## Version: 0.7
+## Version: 0.8
 ## SavedVariablesPerCharacter: 
 WowHou.xml
 Bullet.lua
