@@ -38,6 +38,8 @@ local function GetFirstInactiveEnemy()
 end
 
 function addon.CreateEnemy(data)
+	Enemy.new(data);
+	--[[
 	local e = GetFirstInactiveEnemy()
 	if (e) then
 		e:Reuse(data)
@@ -46,11 +48,25 @@ function addon.CreateEnemy(data)
 	end
 	
 	data = nil;
+	]]--
 end
 
 function Enemy.new(data)
-	local self = setmetatable({}, Enemy)
-	self.name = ""..#WH_GameFrame.enemies;
+	local self = nil;
+	local inactive = GetFirstInactiveEnemy();
+	if (not inactive) then
+		self = setmetatable({}, Enemy);
+		self.name = ""..#WH_GameFrame.enemies;
+		self.parent = WH_GameFrameEnemyOverlay;
+		
+		self.texture = self.parent:CreateTexture(nil, "BORDER");
+		self.healthbar = self.parent:CreateTexture(nil, "BORDER");
+		
+		table.insert(WH_GameFrame.enemies, self);
+	else
+		self = inactive;
+	end
+	
 
 	self.phase = PHASE0;
 	self.isBoss = false;
@@ -64,7 +80,7 @@ function Enemy.new(data)
 	self.tX = data.x;
 	self.tY = data.y;
 	self.elapsed = 0;
-	self.parent = WH_GameFrameEnemyOverlay;
+	
 	self.sources = {};
 	self.speed = data.speed;
 	self.width = data.width;
@@ -88,12 +104,12 @@ function Enemy.new(data)
 	
 	self.func = data.func;
 	
-	self.texture = self.parent:CreateTexture(nil, "BORDER");
+	
 	self.texture:SetPoint("CENTER", self.parent, "BOTTOMLEFT", self.x, self.y);
 	self.texture:SetSize(self.width, self.height);
 	self.texture:SetTexture(data.texture);
-
-	self.healthbar = self.parent:CreateTexture(nil, "BORDER");
+	self.texture:Show();
+	
 	self.healthbar:SetPoint("CENTER", self.parent, "BOTTOMLEFT", self.x-1, self.y - self.height/2 - 5);
 	self.healthbar:SetSize( self.health / self.healthMax * self.width, 3);
 	self.healthbar:SetTexture(0.8, 0.2, 0.2);
@@ -107,9 +123,9 @@ function Enemy.new(data)
 	
 	--self.texture:SetTexture("Interface\\AddOns\\WowHou\\Images\\UI-EJ-BOSS-Earthrager Ptah");
 	
-	table.insert(WH_GameFrame.enemies, self);
 	
-	data = nil;
+	
+	--data = nil;
 end
 
 function Enemy:Tick(elapsed)

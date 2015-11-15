@@ -81,4 +81,6 @@ local function WayPoints(enemy, elapsed)
 	return enemy;
 end
 
+addon.enemyFunctions.waypoints = function(enemy, elapsed) return WayPoints(enemy, elapsed); end ;
+
 table.insert(addon.enemyFunctions, { ["name"] = "Waypoints", ["func"] = function(enemy, elapsed) return WayPoints(enemy, elapsed); end});

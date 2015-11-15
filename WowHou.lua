@@ -20,7 +20,7 @@ local _FPS = 0;
 local _LastMemory = 0;
 
 local _MemHistory = {}
-local _MemMaxHistory = 100;
+local _MemMaxHistory = 200;
 
 local _EnemyList = {};
 
@@ -367,6 +367,11 @@ local function TESTGAMESlash(msg, editbox)
 		--MouseHitsDot()
 	end
 	
+	if (WH_MainFrame:IsShown()) then
+		WH_MainFrame:Hide();
+	else
+		WH_MainFrame:Show();
+	end
 	
 end
 SlashCmdList["TESTGAME"] = TESTGAMESlash
@@ -413,12 +418,12 @@ local function debug_updatext()
 	UpdateAddOnMemoryUsage();
 	
 	_Mem = round(GetAddOnMemoryUsage(addonName), 1)
-	if (_Mem > _MemMax) then
-		_MemMax = _Mem;
-	end
-	if (_Mem < _MemMin) then
-		_MemMin = _Mem;
-	end
+	-- if (_Mem > _MemMax) then
+		-- _MemMax = _Mem;
+	-- end
+	-- if (_Mem < _MemMin) then
+		-- _MemMin = _Mem;
+	-- end
 	
 	if (#_MemHistory >= _MemMaxHistory) then
 		table.remove(_MemHistory, 1);
@@ -426,8 +431,10 @@ local function debug_updatext()
 	
 	table.insert(_MemHistory, _Mem);
 
+	local prevheight = -1;
 	for k, v in ipairs(_MemHistory) do
-		ILW_Debug.memHistory[k]:SetHeight(v/10);
+		ILW_Debug.memHistory[k]:SetPoint("BOTTOM", ILW_Debug, "TOP", 0, 5 + v/10);
+		--ILW_Debug.memHistory[k]:SetHeight(v/10);
 	end
 
 	debugText[1] = _Mem .. "  "..#_MemHistory--" (".._MemMin..", ".._MemMax..")\n";
@@ -505,10 +512,20 @@ ILW_Debug.memHistory = {}
 
 local historywidth = debugWidth/_MemMaxHistory;
 
+-- for i=0, _MemMaxHistory-1 do
+	-- local temp = ILW_Debug:CreateTexture(nil, "OVERLAY");
+	-- temp:SetPoint("BOTTOMLEFT", ILW_Debug, "TOPLEFT", historywidth * i, 5);
+	-- temp:SetSize(historywidth-1, 1);
+	-- temp:SetTexture(1, 1, 1);
+	-- temp:Show();
+	-- table.insert(ILW_Debug.memHistory, temp);
+-- end
+
 for i=0, _MemMaxHistory-1 do
 	local temp = ILW_Debug:CreateTexture(nil, "OVERLAY");
-	temp:SetPoint("BOTTOMLEFT", ILW_Debug, "TOPLEFT", historywidth * i, 5);
-	temp:SetSize(historywidth-1, 0);
+	temp:SetPoint("LEFT", ILW_Debug, "LEFT", historywidth * i, 0);
+	temp:SetPoint("BOTTOM", ILW_Debug, "TOP", 0, 5);
+	temp:SetSize(historywidth, 1);
 	temp:SetTexture(1, 1, 1);
 	temp:Show();
 	table.insert(ILW_Debug.memHistory, temp);
@@ -520,7 +537,7 @@ for i=0, 5 do
 	local temp = ILW_Debug:CreateTexture(nil, "ARTWORK");
 	temp:SetPoint("BOTTOMLEFT", ILW_Debug, "TOPLEFT", 0, 5+i*10);
 	temp:SetSize(debugWidth, 1);
-	temp:SetTexture(0.7, 0.7, 0.7);
+	temp:SetTexture(0.3, 0.3, 0.3);
 	temp:Show();
 	table.insert(ILW_Debug.memHistory, temp);
 end
