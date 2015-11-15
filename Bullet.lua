@@ -34,21 +34,21 @@ local function GetFirstInactiveBullet()
 end
 
 function addon.CreateBullet(data)
-	
-
-	local b = GetFirstInactiveBullet()
-	if (b) then
-		b:Reuse(data)
-	else
-		Bullet.new(data)
-	end
-	
-	data = nil;
+	Bullet.new(data)
 end
 
 function Bullet.new(data)
-	local self = setmetatable({}, Bullet)
-	self.name = "testdot"..#WH_GameFrame.dots;
+	local self = nil;
+	local inactive = GetFirstInactiveBullet();
+	if (not inactive) then
+		self = setmetatable({}, Bullet)
+		self.name = "testdot"..#WH_GameFrame.dots;
+		self.parent = WH_GameFrameBulletOverlay;
+		self.texture = WH_GameFrameBulletOverlay:CreateTexture(self.name, "ARTWORK");
+		table.insert(WH_GameFrame.dots, self);
+	else
+		self = inactive
+	end
 
 	self.active = true;
 	self.x = data.x;
@@ -57,7 +57,7 @@ function Bullet.new(data)
 	self.tY = data.y;
 	self.radius = 6;
 	self.elapsed = 0;
-	self.parent = WH_GameFrameBulletOverlay;
+	
 	self.isEnemy = true;
 	if (data.isEnemy ~= nil) then
 		self.isEnemy = data.isEnemy;
@@ -75,15 +75,13 @@ function Bullet.new(data)
 		self.angle = self.angle + data.angle;
 	end
 	
-	self.texture = WH_GameFrameBulletOverlay:CreateTexture(self.name, "ARTWORK");
+	
 	self.texture:SetPoint("CENTER", WH_GameFrameBulletOverlay, "BOTTOMLEFT", x, y);
 	self.texture:SetSize(self.radius*2, self.radius*2);
 	self.texture:SetTexture("Interface/CHARACTERFRAME/TempPortraitAlphaMaskSmall");
 	self:UpdateTexture()
 
-	table.insert(WH_GameFrame.dots, self);
 	
-	data = nil;
 	--return self
 end
 
@@ -141,34 +139,6 @@ end
 function Bullet:Show()
 	self.texture:Show();
 end
-
-function Bullet:Reuse(data)
-
-	self.active = true;
-	self.x = data.x;
-	self.y = data.y;
-	self.tX = data.x;
-	self.tY = data.y;
-	self.elapsed = 0;
-	self.isEnemy = data.isEnemy;
-	
-	self.angle = 90;
-	if (self.isEnemy) then
-		self.angle = 270; -- default hero straight up
-	end
-	if (data.angle) then
-		self.angle = self.angle + data.angle
-	end
-	self.speed = data.speed;
-	
-	self:UpdateTexture();
-	self.texture:ClearAllPoints();
-	self.texture:SetPoint("CENTER", self.parent, "BOTTOMLEFT", self.tX, self.tY);
-	self.texture:Show();
-	
-	data = nil;
-end
-
 
 function Bullet:ToString()
 	return self.name .. " : \n (" .. self.x .. ", " .. self.y ..")\n " .. self.tX .. "\n " .. self.tY .."\n";

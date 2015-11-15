@@ -39,16 +39,6 @@ end
 
 function addon.CreateEnemy(data)
 	Enemy.new(data);
-	--[[
-	local e = GetFirstInactiveEnemy()
-	if (e) then
-		e:Reuse(data)
-	else
-		Enemy.new(data)
-	end
-	
-	data = nil;
-	]]--
 end
 
 function Enemy.new(data)
@@ -224,56 +214,6 @@ function Enemy:BossIntro(elapsed)
 			table.insert(self.sources, Bs(self.x, self.y, s, true));
 		end
 	end
-end
-
-function Enemy:Reuse(data)
-	self.phase = PHASE0;
-	self.isBoss = false;
-	if (data.isBoss ~= nil) then
-		self.isBoss = data.isBoss;
-	end
-	self.data = data;
-	self.owner = data.owner;
-	self.x = data.x;
-    self.y = data.y;
-	self.tX = data.x;
-    self.tY = data.y;
-    self.elapsed = 0;
-    self.sources = {};
-	self.speed = data.speed;
-	self.width = data.width;
-	self.height = data.height;
-	self.radius = self.height /2;
-	self.healthMax = data.health;
-	self.health = data.health;
-	self.waypoints = data.waypoints;
-	self.waypointNr = 1;
-	self.isActive = true;
-	self.invulnerable = (self.isBoss and true or false);
-	if (data.invulnerable~= nil and self.isBoss == false) then
-		self.invulnerable = data.invulnerable
-	end
-
-	if (not self.isBoss) then -- boss stuff gets added after the intro
-		for k, s in ipairs(data.sources) do
-			table.insert(self.sources, Bs(self.x, self.y, s, true));
-		end
-	end
-	self.func = data.func;
-	
-	self.texture:SetSize(self.width, self.height);
-    self.texture:SetTexture(data.texture);
-	self.texture:Show();
-	
-	self.healthbar:SetPoint("BOTTOMLEFT", self.parent, "BOTTOMLEFT", self.x - self.width/2-1, self.y - self.height/2 - 5);
-	self.healthbar:SetSize(self.width, 5);
-	if (self.isBoss or self.invulnerable) then
-		self.healthbar:Hide();
-	else
-		self.healthbar:Show();
-	end
-	
-	data = nil;
 end
 
 function Enemy:Hide()

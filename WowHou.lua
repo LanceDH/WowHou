@@ -434,6 +434,7 @@ local function debug_updatext()
 	local prevheight = -1;
 	for k, v in ipairs(_MemHistory) do
 		ILW_Debug.memHistory[k]:SetPoint("BOTTOM", ILW_Debug, "TOP", 0, 5 + v/10);
+		ILW_Debug.memHistory[k]:Show();
 		--ILW_Debug.memHistory[k]:SetHeight(v/10);
 	end
 
@@ -504,7 +505,7 @@ ILW_Debug:Show()
 
 ILW_Debug.historyBG = ILW_Debug:CreateTexture(nil, "BACKGROUND");
 ILW_Debug.historyBG:SetPoint("BOTTOMLEFT", ILW_Debug, "TOPLEFT", 0, 5);
-ILW_Debug.historyBG:SetSize(debugWidth, 10*5);
+ILW_Debug.historyBG:SetSize(debugWidth, 10*10);
 ILW_Debug.historyBG:SetTexture(0, 0, 0);
 ILW_Debug.historyBG:Show();
 
@@ -526,18 +527,21 @@ for i=0, _MemMaxHistory-1 do
 	temp:SetPoint("LEFT", ILW_Debug, "LEFT", historywidth * i, 0);
 	temp:SetPoint("BOTTOM", ILW_Debug, "TOP", 0, 5);
 	temp:SetSize(historywidth, 1);
-	temp:SetTexture(1, 1, 1);
-	temp:Show();
+	temp:SetTexture(0.9, 0.75, 0);
+	temp:Hide();
 	table.insert(ILW_Debug.memHistory, temp);
 end
 
 ILW_Debug.memHeights = {}
 
-for i=0, 5 do
+for i=0, 10 do
 	local temp = ILW_Debug:CreateTexture(nil, "ARTWORK");
 	temp:SetPoint("BOTTOMLEFT", ILW_Debug, "TOPLEFT", 0, 5+i*10);
 	temp:SetSize(debugWidth, 1);
-	temp:SetTexture(0.3, 0.3, 0.3);
+	temp:SetTexture(0.1, 0.1, 0.1);
+	if (i%5 == 0) then
+		temp:SetTexture(0.2, 0.2, 0.2);
+	end
 	temp:Show();
 	table.insert(ILW_Debug.memHistory, temp);
 end
