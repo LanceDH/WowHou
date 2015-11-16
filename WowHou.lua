@@ -169,7 +169,7 @@ end
 
 local function CheckCollision()
 	if(MouseHitsDot() ~= nil) then
-		--_GamePaused = true;
+		_GamePaused = true;
 		--WH_GameFrame.mouse:SetTexture("Interface/MINIMAP/Minimap_shield_elite");
 	else
 		--WH_GameFrame.mouse:SetTexture("Interface/MINIMAP/Minimap_shield_normal");
@@ -197,12 +197,24 @@ local function UpdateHero(elapsed)
 	WH_GameFrame.hero:Tick(elapsed);
 end
 
+local function BossIsActive()
+	for ke, enemy in ipairs(WH_GameFrame.enemies) do
+		if (enemy.isBoss and enemy.isActive) then
+			return true;
+		end
+	end
+	return false;
+end
+
 local function UpdateHealthbar()
 	WH_BossHealthFrame.health:SetWidth(200);
 	WH_BossHealthFrame:Hide();
 	for ke, enemy in ipairs(WH_GameFrame.enemies) do
 		if (enemy.isBoss and enemy.isActive) then
 			WH_BossHealthFrame.health:SetWidth(200 * enemy.health / enemy.healthMax);
+			if (enemy.health <= 0) then
+				WH_BossHealthFrame.health:SetWidth(1);
+			end
 			WH_BossHealthFrame:Show();
 		end
 	end
@@ -227,10 +239,6 @@ local function HandleWaves()
 	for i= #_EnemyList, 1, -1 do
 		spawn = _EnemyList[i];
 		if (spawn.time < _GameTimer) then
-			--data = addon.GetEnemyData(spawn.name);
-			--data.x = spawn.x;
-			--data.y = spawn.y;
-			--data.funcName = spawn.funcName;
 			addon.CreateEnemy(spawn);
 			table.remove(_EnemyList, i);
 		end
@@ -293,9 +301,11 @@ local function InitMainframe()
 			--if (_tick >= 0.01) then
 				_tick = elapsed;
 				_TickCount = _TickCount + 1;
-				_GameTimer = _GameTimer + _tick;
 				
-				HandleWaves()
+				if (not BossIsActive()) then
+					_GameTimer = _GameTimer + _tick;
+					HandleWaves()
+				end
 				
 				UpdateEnemies(_tick);
 				UpdateSources(_tick);

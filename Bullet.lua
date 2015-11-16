@@ -67,12 +67,12 @@ function Bullet.new(data)
 		self.speed = data.speed;
 	end
 	
-	self.angle = 90; -- default enemy straight down
-	if (self.isEnemy) then
-		self.angle = 270; -- default hero straight up
-	end
+	--self.angle = 90; -- default enemy straight down
+	--if (self.isEnemy) then
+	--	self.angle = 270; -- default hero straight up
+	--end
 	if (data.angle) then
-		self.angle = self.angle + data.angle;
+		self.angle = data.angle;
 	end
 	
 	

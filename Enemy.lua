@@ -46,7 +46,7 @@ function Enemy.new(data)
 	local inactive = GetFirstInactiveEnemy();
 	if (not inactive) then
 		self = setmetatable({}, Enemy);
-		self.name = ""..#WH_GameFrame.enemies;
+		self.name = "ILW_Enemy"..#WH_GameFrame.enemies;
 		self.parent = WH_GameFrameEnemyOverlay;
 		
 		self.frame = CreateFrame("frame", self.name, WH_GameFrameEnemyOverlay, "WH_EnemyFrameTemplateTemplate")
@@ -66,7 +66,7 @@ function Enemy.new(data)
 	
 	
 
-	self.phase = PHASE0;
+	
 	self.isBoss = false;
 	if (data.isBoss ~= nil) then
 		self.isBoss = data.isBoss;
@@ -90,9 +90,16 @@ function Enemy.new(data)
 	self.waypointNr = 1;
 	self.isActive = true;
 	
+	-- For bosses
+	self.phase = PHASE0;
+	self.soundCount = 0;
+	self.soundPlayed = false;
+	self.tickCount = 0;
+	
 	self.frame:Show();
-	self.frame:SetSize(self.width, self.height);
-	self.frame.image:SetSize(self.width, self.height);
+	
+	self.frame:SetSize(self.height, self.height);
+	self.frame.image:SetSize(self.height, self.height);
 	
 	self.invulnerable = (self.isBoss and true or false);
 	if (data.invulnerable ~= nil and self.isBoss == false) then
@@ -107,6 +114,9 @@ function Enemy.new(data)
 	
 	self.func = data.func;
 	
+	self.frame.arrow:SetRotation(math.rad(180));
+	self.frame.arrow:Hide();
+	
 	self.frame.image:SetTexture(data.texture);
 	if (self.isBoss) then
 		self.frame.image:SetSize(self.height, self.height);
@@ -119,14 +129,24 @@ function Enemy.new(data)
 		self.frame.healthbar:Show();
 	end
 	
+	if (self.isBoss) then
+		self.frame.border:Show();
+	else
+		self.frame.border:Hide();
+		
+	end
+	
 end
 
 function Enemy:Tick(elapsed)
 	if (not self.isActive) then return; end
 
-	if (self.health <= 0) then
+	-- Bosses need their own death phase.
+	if (not self.isBoss and self.health <= 0) then
 		self:Hide();
 		return;
+	-- elseif (self.isBoss and self.canHideBoss) then
+		-- self:Hide();
 	end
 	
 	self.elapsed = self.elapsed + elapsed;
@@ -142,9 +162,15 @@ function Enemy:Tick(elapsed)
 		s:Tick(elapsed);
 	end
 	
-	self.frame.image:ClearAllPoints();
-	self.frame.image:SetPoint("CENTER", self.parent, "BOTTOMLEFT", self.tX, self.tY);
+	--self.frame.image:ClearAllPoints();
+	self.frame:SetPoint("CENTER", self.parent, "BOTTOMLEFT", self.tX, self.tY);
 	self.frame.healthbar:SetSize( self.health / self.healthMax * self.width, 3);
+	
+	if(self.isBoss and self.invulnerable) then
+		self.frame.invulnerable:Show();
+	else
+		self.frame.invulnerable:Hide();
+	end
 	
 	local x = self.tX;
 	local y = self.tY;
@@ -157,7 +183,7 @@ function Enemy:Tick(elapsed)
 end
 
 function Enemy:Damage(amount)
-	if (self.invulnerable) then return false; end
+	if (self.invulnerable or self.health == 0) then return false; end
 	self.health = self.health - amount;
 	return true;
 end
@@ -222,6 +248,7 @@ function Enemy:Hide()
 	-- self.healthbar:Hide();
 	self.sources = {};
 	self.isActive = false;
+
 	-- Also hide all the adds if any
 	self.owner = nil;
 	for k, v in ipairs(WH_GameFrame.enemies) do
@@ -229,4 +256,9 @@ function Enemy:Hide()
 			v:Hide();
 		end
 	end
+end
+
+function Enemy:ArrowAngleRad(rads) 
+	self.frame.arrow:SetRotation(rads - math.pi/2);
+	self.frame.arrow:SetPoint("CENTER", self.frame, "CENTER", 35*math.cos(rads), 35*math.sin(rads));
 end

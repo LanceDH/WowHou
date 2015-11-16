@@ -59,7 +59,6 @@ local function WayPoints(enemy, elapsed)
 			enemy.y = targetY;
 			enemy.waypointNr = enemy.waypointNr + 1;
 		else
-		
 			local angle = math.deg(math.atan2(xDif, yDif)) + 90;
 			if angle < 0 then angle = 360 + angle end
 			angle = 360 - angle;

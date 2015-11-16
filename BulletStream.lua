@@ -66,9 +66,13 @@ function Bs:SpwanBulletOfType(source)
 	bulletData.speed = source.speed;
 	bulletData.isEnemy = self.isEnemy
 	bulletData.origin = self.origin;
-
-	
 	local nr = self.streams;
+
+	if (source.spread == 360) then
+		source.spread = 360 - source.spread /(nr-1);
+	end
+	
+
 	
 	if source.bType == "WAVE" then
 
@@ -105,6 +109,8 @@ function Bs:SpwanBulletOfType(source)
 		source.spread = 0;
 		spacing = 0;
 	end
+	
+	
 	
 	if (not self.isEnemy) then
 		self.texture:SetRotation(math.rad(360 - source.angle));

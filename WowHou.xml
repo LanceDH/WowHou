@@ -7,6 +7,13 @@
 		
 		<Layers>
 			<Layer level="BACKGROUND">
+				<Texture file="Interface/MINIMAP/MiniMap-QuestArrow" parentKey="arrow">
+					<size x="40" y="40"/>
+					<Anchors>
+						<Anchor point="CENTER" x="0" y="-35"/>
+					</Anchors>
+				</Texture>
+			
 				<Texture parentKey="image">
 					<Anchors>
 						<Anchor point="TOPLEFT"/>
@@ -17,17 +24,30 @@
 				<Texture parentKey="healthbar">
 					<size x="64" y="3"/>
 					<Anchors>
-						<Anchor point="TOPLEFT" relstivePoint="BOTTOMLEFT" y="-5"/>
+						<Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" y="-5"/>
 					</Anchors>
 					<Color r="0.8" g="0.2" b="0.2"/>
 				</Texture>
 			</Layer>
 			<Layer level="BORDER">
-				<Texture parentKey="border">
+				
+			</Layer>
+			<Layer level="ARTWORK">
+				<Texture file="Interface/COMMON/portrait-ring-withbg-highlight" alphaMode="ADD" parentKey="invulnerable" >
+					<Size x="64" y="64"/>
 					<Anchors>
 						<Anchor point="TOPLEFT"/>
 						<Anchor point="BOTTOMRIGHT"/>
 					</Anchors>
+					<TexCoords left="0.287" right="0.7" top="0.295" bottom="0.7"/>
+					<Color r="1" g="1" b="1" a="0.5"/>
+				</Texture>
+				<Texture file="Interface/TALENTFRAME/spec-filagree" parentKey="border">
+					<Size x="74" y="74"/>
+					<Anchors>
+						<Anchor point="CENTER" relativePoint="CENTER"/>
+					</Anchors>
+					<TexCoords left="0.012" right="0.262" top="0.5" bottom="0.75"/>
 				</Texture>
 			</Layer>
 		</Layers>
@@ -236,6 +256,8 @@
 						
 						</FontString>
 					</Layer>
+					
+					
 				</Layers>
 				
 			</Frame>
